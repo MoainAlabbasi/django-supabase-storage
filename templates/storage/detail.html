@@ -1,0 +1,91 @@
+{% extends 'storage/base.html' %}
+
+{% block title %}{{ file.original_filename }} - نظام تخزين الملفات{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>📄 تفاصيل الملف</h2>
+    <a href="{% url 'index' %}" class="btn" style="background: #6c757d;">العودة للقائمة</a>
+</div>
+
+<div class="file-card">
+    <h3>{{ file.original_filename }}</h3>
+    
+    <div class="file-info">
+        <strong>رقم الملف:</strong>
+        <span>{{ file.id }}</span>
+    </div>
+    
+    <div class="file-info">
+        <strong>اسم الملف الأصلي:</strong>
+        <span>{{ file.original_filename }}</span>
+    </div>
+    
+    <div class="file-info">
+        <strong>مسار التخزين:</strong>
+        <span style="font-family: monospace; font-size: 14px;">{{ file.storage_path }}</span>
+    </div>
+    
+    <div class="file-info">
+        <strong>نوع الملف:</strong>
+        <span>{{ file.content_type }}</span>
+    </div>
+    
+    <div class="file-info">
+        <strong>حجم الملف:</strong>
+        <span>{{ file.get_file_size_display }}</span>
+    </div>
+    
+    <div class="file-info">
+        <strong>تاريخ الرفع:</strong>
+        <span>{{ file.uploaded_at|date:"Y-m-d H:i:s" }}</span>
+    </div>
+    
+    {% if file.description %}
+    <div class="file-info">
+        <strong>الوصف:</strong>
+        <span>{{ file.description }}</span>
+    </div>
+    {% endif %}
+    
+    <div class="file-info">
+        <strong>الرابط العام:</strong>
+        <span>
+            <a href="{{ file.public_url }}" target="_blank" style="color: #667eea; word-break: break-all;">
+                {{ file.public_url }}
+            </a>
+        </span>
+    </div>
+</div>
+
+<!-- Preview for images -->
+{% if 'image' in file.content_type %}
+<div style="margin-top: 30px;">
+    <h3 style="margin-bottom: 15px;">معاينة الصورة:</h3>
+    <img src="{{ file.public_url }}" alt="{{ file.original_filename }}" 
+         style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+</div>
+{% endif %}
+
+<!-- Actions -->
+<div style="margin-top: 30px; display: flex; gap: 10px;">
+    <a href="{{ file.public_url }}" target="_blank" class="btn">🔗 فتح الملف</a>
+    <a href="{{ file.public_url }}" download class="btn" style="background: #28a745;">⬇️ تحميل الملف</a>
+    
+    <form method="post" action="{% url 'delete_file' file.pk %}" 
+          onsubmit="return confirm('هل أنت متأكد من حذف هذا الملف؟');" 
+          style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">🗑️ حذف الملف</button>
+    </form>
+</div>
+
+<!-- API Information -->
+<div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+    <h3 style="color: #495057; margin-bottom: 15px;">📡 معلومات API</h3>
+    <p style="color: #6c757d; margin-bottom: 10px;">يمكنك الوصول إلى معلومات هذا الملف عبر API:</p>
+    <code style="display: block; padding: 10px; background: white; border-radius: 5px; font-family: monospace;">
+        GET /api/files/{{ file.id }}/
+    </code>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'storage/base.html' %}
+
+{% block title %}رفع ملف جديد - نظام تخزين الملفات{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 30px;">📤 رفع ملف جديد</h2>
+
+<form method="post" enctype="multipart/form-data" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="file">اختر الملف:</label>
+        <input type="file" name="file" id="file" required>
+        <small style="color: #6c757d; display: block; margin-top: 5px;">
+            الحد الأقصى: 50 MB | الأنواع المسموحة: الصور، PDF، Word، Excel، النصوص، ZIP
+        </small>
+    </div>
+    
+    <div class="form-group">
+        <label for="description">الوصف (اختياري):</label>
+        <textarea name="description" id="description" rows="4" placeholder="أضف وصفاً للملف..."></textarea>
+    </div>
+    
+    <div style="display: flex; gap: 10px;">
+        <button type="submit" class="btn">رفع الملف</button>
+        <a href="{% url 'index' %}" class="btn" style="background: #6c757d;">إلغاء</a>
+    </div>
+</form>
+
+<div style="margin-top: 40px; padding: 20px; background: #e7f3ff; border-radius: 10px; border-right: 4px solid #667eea;">
+    <h3 style="color: #667eea; margin-bottom: 10px;">💡 ملاحظة</h3>
+    <p style="color: #495057;">
+        سيتم رفع الملف إلى Supabase Storage وحفظ معلوماته في قاعدة البيانات. 
+        يمكنك الوصول إلى الملف من خلال الرابط العام الذي سيتم توليده تلقائياً.
+    </p>
+</div>
+{% endblock %}
